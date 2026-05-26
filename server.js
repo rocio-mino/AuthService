@@ -1,8 +1,8 @@
 import dotenv from 'dotenv';
 
-dotenv.config(); // carga las variables de entorno
+dotenv.config();// Carga variables de entorno
 
-import app from './src/app.js';
+const { default: app } = await import('./src/app.js');
 
 const PORT = process.env.PORT || 3001;
 
