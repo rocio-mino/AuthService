@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-// Obtiene un token para consumir la Management API
+// Obtiene token para consumir la Management API
 const getManagementToken = async () => {
 
   const response = await axios.post(
@@ -14,6 +14,57 @@ const getManagementToken = async () => {
   );
 
   return response.data.access_token;
+
+};
+
+// Obtiene usuarios junto a sus roles
+export const getUsersWithRoles = async () => {
+  const token = await getManagementToken();
+
+  // Obtiene usuarios
+  const usersResponse = await axios.get(
+    `https://${process.env.AUTH0_DOMAIN}/api/v2/users`,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    }
+  );
+
+  const users = usersResponse.data;
+
+  // Obtiene roles por cada usuario
+  const usersWithRoles = await Promise.all(
+    users.map(async (user) => {
+      try {
+
+        const rolesResponse = await axios.get(
+          `https://${process.env.AUTH0_DOMAIN}/api/v2/users/${encodeURIComponent(user.user_id)}/roles`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`
+            }
+          }
+        );
+
+        const roles = rolesResponse.data.map(
+          (role) => role.name
+        );
+
+        return {
+          ...user,
+          roles
+        };
+      } catch {
+        return {
+          ...user,
+          roles: []
+        };
+      }
+    })
+  );
+  
+  return usersWithRoles;
 };
 
 export default getManagementToken;
