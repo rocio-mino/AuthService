@@ -19,6 +19,7 @@ const getManagementToken = async () => {
 
 // Obtiene usuarios junto a sus roles
 export const getUsersWithRoles = async () => {
+
   const token = await getManagementToken();
 
   // Obtiene usuarios
@@ -35,7 +36,9 @@ export const getUsersWithRoles = async () => {
 
   // Obtiene roles por cada usuario
   const usersWithRoles = await Promise.all(
+
     users.map(async (user) => {
+
       try {
 
         const rolesResponse = await axios.get(
@@ -55,16 +58,56 @@ export const getUsersWithRoles = async () => {
           ...user,
           roles
         };
+
       } catch {
+
         return {
           ...user,
           roles: []
         };
+
       }
+
     })
+
   );
-  
+
   return usersWithRoles;
+
+};
+
+// Crea usuario en Auth0
+export const createAuth0User = async (
+  email,
+  password,
+  name
+) => {
+
+  const token = await getManagementToken();
+
+  const response = await axios.post(
+    `https://${process.env.AUTH0_DOMAIN}/api/v2/users`,
+    {
+      email,
+      password,
+      name,
+
+      connection:
+        process.env.AUTH0_DB_CONNECTION ||
+        'Username-Password-Authentication',
+
+      email_verified: false
+    },
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      }
+    }
+  );
+
+  return response.data;
+
 };
 
 export default getManagementToken;
