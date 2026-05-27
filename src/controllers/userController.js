@@ -1,34 +1,83 @@
-import axios from 'axios';
+import {
+  getUsersWithRoles,
+  createAuth0User
+} from '../services/auth0ManagementService.js';
 
-import getManagementToken from '../services/auth0ManagementService.js';
-
-// Obtiene la lista de usuarios desde Auth0
+// Obtiene usuarios desde Auth0 junto a sus roles
 export const getUsers = async (req, res) => {
 
   try {
 
-    // Token interno para Management API
-    const token = await getManagementToken();
+    const users = await getUsersWithRoles();
 
-    // Consulta usuarios en Auth0
-    const response = await axios.get(
-      `https://${process.env.AUTH0_DOMAIN}/api/v2/users`,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
-      }
-    );
-
-    res.json(response.data);
+    res.json(users);
 
   } catch (error) {
 
-    console.error(error.response?.data || error.message);
+    console.error(
+      error.response?.data || error.message
+    );
 
     res.status(500).json({
       message: 'Error obteniendo usuarios',
       error: error.response?.data || error.message
+    });
+
+  }
+
+};
+
+// Crea un nuevo usuario en Auth0
+export const createUser = async (req, res) => {
+
+  try {
+
+    const { email, password, name } = req.body;
+
+    // Validaciones básicas
+    if (!email || !password || !name) {
+
+      return res.status(400).json({
+        message:
+          'email, password y name son obligatorios'
+      });
+
+    }
+
+    const user = await createAuth0User(
+      email,
+      password,
+      name
+    );
+
+    return res.status(201).json({
+
+      message: 'Usuario creado correctamente',
+
+      user: {
+        user_id: user.user_id,
+        email: user.email,
+        name: user.name
+      }
+
+    });
+
+  } catch (error) {
+
+    const details =
+      error.response?.data || error.message;
+
+    const status =
+      error.response?.status || 500;
+
+    console.error(details);
+
+    return res.status(status).json({
+
+      message: 'Error creando usuario',
+
+      error: details
+
     });
 
   }
