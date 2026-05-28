@@ -13,12 +13,13 @@ import {
 
 const router = express.Router();
 
+router.get("/search", checkJwt, searchUsers); // ej: /users/search?username=luc
+
 // Endpoint para listar usuarios
 router.get("/", checkJwt, getUsers);
 router.post("/", checkJwt, createUser);
 router.put("/:id", checkJwt, updateUser);
 router.patch("/:id", checkJwt, patchUser);
 router.delete("/:id", checkJwt, deleteUser);
-router.get("/search", checkJwt, searchUsers); // ej: /users/search?username=luc
 
 export default router;
