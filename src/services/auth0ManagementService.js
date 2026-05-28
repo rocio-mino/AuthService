@@ -139,4 +139,24 @@ export const deleteAuth0User = async (id) => {
   );
 };
 
+// busca usuario por username o nombre
+export const findUsersByUsername = async (username) => {
+  const token = await getManagementToken();
+
+  const response = await axios.get(
+    `https://${process.env.AUTH0_DOMAIN}/api/v2/users`,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      params: {
+        q: `username:*${username}* OR name:*${username}*`,
+        search_engine: "v3", // v3 es el motor de busqueda recomendado para consultas avanzadas
+      },
+    },
+  );
+
+  return response.data;
+};
+
 export default getManagementToken;
