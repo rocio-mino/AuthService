@@ -1,6 +1,9 @@
 import {
   getUsersWithRoles,
-  createAuth0User
+  createAuth0User,
+  updateAuth0User,
+  patchAuth0User,
+  deleteAuth0User
 } from '../services/auth0ManagementService.js';
 
 // Obtiene usuarios desde Auth0 junto a sus roles
@@ -75,6 +78,135 @@ export const createUser = async (req, res) => {
     return res.status(status).json({
 
       message: 'Error creando usuario',
+
+      error: details
+
+    });
+
+  }
+
+};
+
+// Actualiza completamente usuario
+export const updateUser = async (req, res) => {
+
+  try {
+
+    const { id } = req.params;
+
+    const updatedUser =
+      await updateAuth0User(
+        id,
+        req.body
+      );
+
+    return res.json({
+
+      message:
+        'Usuario actualizado correctamente',
+
+      user: updatedUser
+
+    });
+
+  } catch (error) {
+
+    const details =
+      error.response?.data || error.message;
+
+    const status =
+      error.response?.status || 500;
+
+    console.error(details);
+
+    return res.status(status).json({
+
+      message:
+        'Error actualizando usuario',
+
+      error: details
+
+    });
+
+  }
+
+};
+
+// Actualiza parcialmente usuario
+export const patchUser = async (req, res) => {
+
+  try {
+
+    const { id } = req.params;
+
+    const updatedUser =
+      await patchAuth0User(
+        id,
+        req.body
+      );
+
+    return res.json({
+
+      message:
+        'Usuario actualizado parcialmente',
+
+      user: updatedUser
+
+    });
+
+  } catch (error) {
+
+    const details =
+      error.response?.data || error.message;
+
+    const status =
+      error.response?.status || 500;
+
+    console.error(details);
+
+    return res.status(status).json({
+
+      message:
+        'Error actualizando usuario',
+
+      error: details
+
+    });
+
+  }
+
+};
+
+// Elimina usuario
+export const deleteUser = async (req, res) => {
+
+  try {
+
+    const { id } = req.params;
+
+    await deleteAuth0User(id);
+
+    return res.json({
+
+      message:
+        'Usuario eliminado correctamente'
+
+    });
+
+  } catch (error) {
+
+    const details =
+      error.response?.data || error.message;
+
+    const status =
+      error.response?.status || 500;
+
+    console.error(details);
+
+    return res.status(status).json({
+
+      message:
+        'Error eliminando usuario',
 
       error: details
 

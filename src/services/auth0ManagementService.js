@@ -110,4 +110,68 @@ export const createAuth0User = async (
 
 };
 
+// Actualiza completamente usuario
+export const updateAuth0User = async (
+  id,
+  userData
+) => {
+
+  const token = await getManagementToken();
+
+ const response = await axios.patch(
+    `https://${process.env.AUTH0_DOMAIN}/api/v2/users/${encodeURIComponent(id)}`,
+    userData,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      }
+    }
+  );
+
+  return response.data;
+
+};
+
+// Actualiza parcialmente usuario
+export const patchAuth0User = async (
+  id,
+  userData
+) => {
+
+  const token = await getManagementToken();
+
+  const response = await axios.patch(
+    `https://${process.env.AUTH0_DOMAIN}/api/v2/users/${encodeURIComponent(id)}`,
+    userData,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      }
+    }
+  );
+
+  return response.data;
+
+};
+
+// Elimina usuario
+export const deleteAuth0User = async (
+  id
+) => {
+
+  const token = await getManagementToken();
+
+  await axios.delete(
+    `https://${process.env.AUTH0_DOMAIN}/api/v2/users/${encodeURIComponent(id)}`,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    }
+  );
+
+};
+
 export default getManagementToken;
