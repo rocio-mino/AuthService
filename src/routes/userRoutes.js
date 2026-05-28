@@ -1,16 +1,25 @@
-import express from 'express';
+import express from "express";
 
-import checkJwt from '../middlewares/authMiddleware.js';
+import checkJwt from "../middlewares/authMiddleware.js";
 
-import { getUsers, createUser, updateUser, patchUser, deleteUser} from '../controllers/userController.js';
+import {
+  getUsers,
+  createUser,
+  updateUser,
+  patchUser,
+  deleteUser,
+  searchUsers,
+} from "../controllers/userController.js";
 
 const router = express.Router();
 
+router.get("/search", checkJwt, searchUsers); // ej: /users/search?username=luc
+
 // Endpoint para listar usuarios
-router.get('/', checkJwt, getUsers);
-router.post('/', checkJwt, createUser);
-router.put('/:id', checkJwt, updateUser);
-router.patch('/:id', checkJwt, patchUser);
-router.delete('/:id', checkJwt, deleteUser);
+router.get("/", checkJwt, getUsers);
+router.post("/", checkJwt, createUser);
+router.put("/:id", checkJwt, updateUser);
+router.patch("/:id", checkJwt, patchUser);
+router.delete("/:id", checkJwt, deleteUser);
 
 export default router;
