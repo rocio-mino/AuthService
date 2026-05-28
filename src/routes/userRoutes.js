@@ -8,6 +8,7 @@ import {
   updateUser,
   patchUser,
   deleteUser,
+  searchUsers,
 } from "../controllers/userController.js";
 
 const router = express.Router();
@@ -18,5 +19,6 @@ router.post("/", checkJwt, createUser);
 router.put("/:id", checkJwt, updateUser);
 router.patch("/:id", checkJwt, patchUser);
 router.delete("/:id", checkJwt, deleteUser);
+router.get("/search", checkJwt, searchUsers);
 
 export default router;

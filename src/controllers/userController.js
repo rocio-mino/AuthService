@@ -4,6 +4,7 @@ import {
   updateAuth0User,
   patchAuth0User,
   deleteAuth0User,
+  findUsersByUsername,
 } from "../services/auth0ManagementService.js";
 
 // Obtiene usuarios desde Auth0 junto a sus roles
@@ -134,6 +135,34 @@ export const deleteUser = async (req, res) => {
     return res.status(status).json({
       message: "Error eliminando usuario",
 
+      error: details,
+    });
+  }
+};
+
+// busca usuarios por username
+export const searchUsers = async (req, res) => {
+  try {
+    const { username } = req.query;
+
+    if (!username?.trim()) {
+      return res.status(400).json({
+        message: "username es requerido",
+      });
+    }
+
+    const users = await findUsersByUsername(username);
+
+    return res.json(users);
+  } catch (error) {
+    const details = error.response?.data || error.message;
+
+    const status = error.response?.status || 500;
+
+    console.error(details);
+
+    return res.status(status).json({
+      message: "Error buscando usuarios",
       error: details,
     });
   }
