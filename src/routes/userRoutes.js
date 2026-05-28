@@ -19,6 +19,6 @@ router.post("/", checkJwt, createUser);
 router.put("/:id", checkJwt, updateUser);
 router.patch("/:id", checkJwt, patchUser);
 router.delete("/:id", checkJwt, deleteUser);
-router.get("/search", checkJwt, searchUsers);
+router.get("/search", checkJwt, searchUsers); // ej: /users/search?username=luc
 
 export default router;
