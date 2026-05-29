@@ -150,7 +150,7 @@ export const findUsersByUsername = async (username) => {
         Authorization: `Bearer ${token}`,
       },
       params: {
-        q: `nickname:*${username}*`, // el * es un wildcard para buscar coincidencias parciales
+        q: `nickname:${username}*`, // el * es un wildcard para buscar coincidencias parciales
         search_engine: "v3", // v3 es el motor de busqueda recomendado para consultas avanzadas
       },
     },
