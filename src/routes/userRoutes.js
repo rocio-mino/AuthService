@@ -11,15 +11,24 @@ import {
   searchUsers,
 } from "../controllers/userController.js";
 
+import {
+  validateCreateUser,
+  validateSearchUser,
+  validateUserId,
+} from "../validations/userValidation.js";
+
 const router = express.Router();
 
-router.get("/search", checkJwt, searchUsers); // ej: /users/search?username=luc
+router.get("/search", checkJwt, validateSearchUser, searchUsers);
 
-// Endpoint para listar usuarios
 router.get("/", checkJwt, getUsers);
-router.post("/", checkJwt, createUser);
-router.put("/:id", checkJwt, updateUser);
-router.patch("/:id", checkJwt, patchUser);
-router.delete("/:id", checkJwt, deleteUser);
+
+router.post("/", checkJwt, validateCreateUser, createUser);
+
+router.put("/:id", checkJwt, validateUserId, updateUser);
+
+router.patch("/:id", checkJwt, validateUserId, patchUser);
+
+router.delete("/:id", checkJwt, validateUserId, deleteUser);
 
 export default router;
