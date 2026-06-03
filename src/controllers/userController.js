@@ -12,13 +12,14 @@ export const getUsers = async (req, res) => {
   try {
     const users = await getUsersWithRoles();
 
-    res.json(users);
+    return res.json(users);
   } catch (error) {
-    console.error(error.response?.data || error.message);
+    const details = error.response?.data || error.message;
+    const status = error.response?.status || 500;
 
-    res.status(500).json({
+    return res.status(status).json({
       message: "Error obteniendo usuarios",
-      error: error.response?.data || error.message,
+      error: details,
     });
   }
 };
@@ -28,18 +29,10 @@ export const createUser = async (req, res) => {
   try {
     const { email, password, name } = req.body;
 
-    // Validaciones básicas
-    if (!email || !password || !name) {
-      return res.status(400).json({
-        message: "email, password y name son obligatorios",
-      });
-    }
-
     const user = await createAuth0User(email, password, name);
 
     return res.status(201).json({
       message: "Usuario creado correctamente",
-
       user: {
         user_id: user.user_id,
         email: user.email,
@@ -48,14 +41,10 @@ export const createUser = async (req, res) => {
     });
   } catch (error) {
     const details = error.response?.data || error.message;
-
     const status = error.response?.status || 500;
-
-    console.error(details);
 
     return res.status(status).json({
       message: "Error creando usuario",
-
       error: details,
     });
   }
@@ -70,19 +59,15 @@ export const updateUser = async (req, res) => {
 
     return res.json({
       message: "Usuario actualizado correctamente",
-
+      user: updatedUser,
       user: updatedUser,
     });
   } catch (error) {
     const details = error.response?.data || error.message;
-
     const status = error.response?.status || 500;
-
-    console.error(details);
 
     return res.status(status).json({
       message: "Error actualizando usuario",
-
       error: details,
     });
   }
@@ -97,19 +82,15 @@ export const patchUser = async (req, res) => {
 
     return res.json({
       message: "Usuario actualizado parcialmente",
-
+      user: updatedUser,
       user: updatedUser,
     });
   } catch (error) {
     const details = error.response?.data || error.message;
-
     const status = error.response?.status || 500;
-
-    console.error(details);
 
     return res.status(status).json({
       message: "Error actualizando usuario",
-
       error: details,
     });
   }
@@ -127,14 +108,10 @@ export const deleteUser = async (req, res) => {
     });
   } catch (error) {
     const details = error.response?.data || error.message;
-
     const status = error.response?.status || 500;
-
-    console.error(details);
 
     return res.status(status).json({
       message: "Error eliminando usuario",
-
       error: details,
     });
   }
@@ -145,21 +122,12 @@ export const searchUsers = async (req, res) => {
   try {
     const { username } = req.query;
 
-    if (!username?.trim()) {
-      return res.status(400).json({
-        message: "username es requerido",
-      });
-    }
-
     const users = await findUsersByUsername(username);
 
     return res.json(users);
   } catch (error) {
     const details = error.response?.data || error.message;
-
     const status = error.response?.status || 500;
-
-    console.error(details);
 
     return res.status(status).json({
       message: "Error buscando usuarios",

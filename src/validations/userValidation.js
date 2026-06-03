@@ -5,7 +5,7 @@ export const regex = {
 
   name: /^[a-zA-ZÀ-ÿ\s]{2,50}$/,
 
-  username: /^[a-zA-Z0-9._-]{3,30}$/,
+  username: /^[a-zA-Z0-9._-]{2,30}$/,
 
   auth0Id: /^[a-zA-Z0-9|_-]+$/,
 };
