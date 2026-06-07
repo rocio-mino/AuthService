@@ -10,9 +10,18 @@ import {
 // Obtiene usuarios desde Auth0 junto a sus roles
 export const getUsers = async (req, res) => {
   try {
-    const users = await getUsersWithRoles();
+    const page = Number.parseInt(req.query.page ?? "0", 10);
+    const limit = Number.parseInt(req.query.limit ?? "10", 10);
 
-    return res.json(users);
+    const { users, pagination } = await getUsersWithRoles({
+      page: Number.isNaN(page) ? 0 : page,
+      limit: Number.isNaN(limit) ? 10 : limit,
+    });
+
+    return res.json({
+      users,
+      pagination,
+    });
   } catch (error) {
     const details = error.response?.data || error.message;
     const status = error.response?.status || 500;
