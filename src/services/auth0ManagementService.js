@@ -15,8 +15,8 @@ const getManagementToken = async () => {
   return response.data.access_token;
 };
 
-// Obtiene usuarios junto a sus roles
-export const getUsersWithRoles = async () => {
+// Obtiene usuarios junto a sus roles con paginacion
+export const getUsersWithRoles = async ({ page = 0, limit = 10 } = {}) => {
   const token = await getManagementToken();
 
   // Obtiene usuarios
@@ -26,10 +26,16 @@ export const getUsersWithRoles = async () => {
       headers: {
         Authorization: `Bearer ${token}`,
       },
+      params: {
+        page,
+        per_page: limit,
+        include_totals: true,
+      },
     },
   );
 
-  const users = usersResponse.data;
+  const users = usersResponse.data.users || [];
+  const total = usersResponse.data.total ?? users.length;
 
   // Obtiene roles por cada usuario
   const usersWithRoles = await Promise.all(
@@ -59,7 +65,15 @@ export const getUsersWithRoles = async () => {
     }),
   );
 
-  return usersWithRoles;
+  return {
+    users: usersWithRoles,
+    pagination: {
+      page,
+      limit,
+      total,
+      totalPages: Math.ceil(total / limit),
+    },
+  };
 };
 
 // Crea usuario en Auth0

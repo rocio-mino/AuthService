@@ -14,6 +14,7 @@ import {
 import {
   validateCreateUser,
   validateSearchUser,
+  validateUsersPagination,
   validateUserId,
 } from "../validations/userValidation.js";
 
@@ -21,7 +22,7 @@ const router = express.Router();
 
 router.get("/search", checkJwt, validateSearchUser, searchUsers);
 
-router.get("/", checkJwt, getUsers);
+router.get("/", checkJwt, validateUsersPagination, getUsers);
 
 router.post("/", checkJwt, validateCreateUser, createUser);
 
