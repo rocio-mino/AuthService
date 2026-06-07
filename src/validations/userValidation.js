@@ -59,6 +59,27 @@ export const validateSearchUser = (req, res, next) => {
   next();
 };
 
+export const validateUsersPagination = (req, res, next) => {
+  const { page = "0", limit = "10" } = req.query; // limite 10 pero en el front se puede cambiar
+
+  const parsedPage = Number.parseInt(page, 10);
+  const parsedLimit = Number.parseInt(limit, 10);
+
+  if (Number.isNaN(parsedPage) || parsedPage < 0) {
+    return res.status(400).json({
+      message: "page debe ser un numero mayor o igual a 0",
+    });
+  }
+
+  if (Number.isNaN(parsedLimit) || parsedLimit < 1 || parsedLimit > 100) {
+    return res.status(400).json({
+      message: "limit debe ser un numero entre 1 y 100",
+    });
+  }
+
+  next(); // next() es para continuar con la siguiente funcion de middleware
+};
+
 export const validateUserId = (req, res, next) => {
   const { id } = req.params;
 
