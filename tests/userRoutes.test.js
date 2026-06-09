@@ -158,4 +158,25 @@ describe("PATCH /api/users/:id", () => {
     );
   });
 });
+
+describe("DELETE /api/users/:id", () => {
+  test("debe eliminar un usuario", async () => {
+    const { deleteAuth0User } = await import(
+      "../src/services/auth0ManagementService.js"
+    );
+
+    //simula la eliminación del usuario en Auth0
+    deleteAuth0User.mockResolvedValue();
+
+    const response = await request(app).delete(
+      "/api/users/auth0|123"
+    );
+
+    expect(response.statusCode).toBe(200);
+
+    expect(response.body.message).toBe(
+      "Usuario eliminado correctamente"
+    );
+  });
+});
 });
