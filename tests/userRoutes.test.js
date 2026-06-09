@@ -50,4 +50,50 @@ describe("GET /api/users", () => {
 
     expect(response.body.users[0].email).toBe("rocio@test.com");
   });
+
+describe("POST /api/users", () => {
+  test("debe crear un usuario correctamente", async () => {
+    const { createAuth0User } = await import(
+      "../src/services/auth0ManagementService.js"
+    );
+
+    createAuth0User.mockResolvedValue({
+      user_id: "auth0|999",
+      email: "nuevo@test.com",
+      name: "Nuevo Usuario",
+    });
+
+    const response = await request(app)
+      .post("/api/users")
+      .send({
+        email: "nuevo@test.com",
+        password: "Password123*",
+        name: "Nuevo Usuario",
+      });
+
+    expect(response.statusCode).toBe(201);
+
+    expect(response.body.message).toBe(
+      "Usuario creado correctamente"
+    );
+
+    expect(response.body.user.email).toBe(
+      "nuevo@test.com"
+    );
+  });
+});
+
+describe("POST /api/users - validaciones", () => {
+  test("debe rechazar datos inválidos", async () => {
+    const response = await request(app)
+      .post("/api/users")
+      .send({
+        email: "",
+        password: "",
+        name: "",
+      });
+
+    expect(response.statusCode).toBe(400);
+  });
+});
 });
