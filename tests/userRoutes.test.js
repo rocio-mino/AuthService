@@ -34,6 +34,7 @@ jest.unstable_mockModule("../src/services/auth0ManagementService.js", () => ({
 const { default: request } = await import("supertest");
 const { default: app } = await import("../src/app.js");
 
+// Función real para obtener usuarios con roles (sin mock)
 describe("GET /api/users", () => {
   test("debe obtener una lista de usuarios", async () => {
     const response = await request(app).get("/api/users");
@@ -56,7 +57,7 @@ describe("POST /api/users", () => {
     const { createAuth0User } = await import(
       "../src/services/auth0ManagementService.js"
     );
-
+    // Simula la creación del usuario en Auth0
     createAuth0User.mockResolvedValue({
       user_id: "auth0|999",
       email: "nuevo@test.com",
@@ -85,6 +86,7 @@ describe("POST /api/users", () => {
 
 describe("POST /api/users - validaciones", () => {
   test("debe rechazar datos inválidos", async () => {
+    // No se envían datos o se envían datos vacíos
     const response = await request(app)
       .post("/api/users")
       .send({
@@ -94,6 +96,37 @@ describe("POST /api/users - validaciones", () => {
       });
 
     expect(response.statusCode).toBe(400);
+  });
+});
+
+describe("PUT /api/users/:id", () => {
+  test("debe actualizar un usuario", async () => {
+    const { updateAuth0User } = await import(
+      "../src/services/auth0ManagementService.js"
+    );
+    // Simula la actualización del usuario en Auth0
+    updateAuth0User.mockResolvedValue({
+      user_id: "auth0|123",
+      email: "actualizado@test.com",
+      name: "Usuario Actualizado",
+    });
+
+    const response = await request(app)
+      .put("/api/users/auth0|123")
+      .send({
+        email: "actualizado@test.com",
+        name: "Usuario Actualizado",
+      });
+
+    expect(response.statusCode).toBe(200);
+
+    expect(response.body.message).toBe(
+      "Usuario actualizado correctamente"
+    );
+
+    expect(response.body.user.email).toBe(
+      "actualizado@test.com"
+    );
   });
 });
 });
