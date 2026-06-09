@@ -51,6 +51,7 @@ describe("GET /api/users", () => {
 
     expect(response.body.users[0].email).toBe("rocio@test.com");
   });
+});
 
 describe("POST /api/users", () => {
   test("debe crear un usuario correctamente", async () => {
@@ -99,6 +100,37 @@ describe("POST /api/users - validaciones", () => {
   });
 });
 
+describe("POST /api/users - email inválido", () => {
+  test("debe rechazar un email inválido", async () => {
+    // Se envía un email con formato inválido
+    const response = await request(app)
+      .post("/api/users")
+      .send({
+        email: "correoinvalido",
+        password: "Password123",
+        name: "Rocio",
+      });
+
+    expect(response.statusCode).toBe(400);
+
+    expect(response.body.message).toBe("Email inválido");
+  });
+});
+
+describe("GET /api/users - paginación", () => {
+  test("debe rechazar un page negativo", async () => {
+    const response = await request(app).get(
+      "/api/users?page=-1&limit=10"
+    );
+
+    expect(response.statusCode).toBe(400);
+
+    expect(response.body.message).toBe(
+      "page debe ser un numero mayor o igual a 0"
+    );
+  });
+});
+
 describe("PUT /api/users/:id", () => {
   test("debe actualizar un usuario", async () => {
     const { updateAuth0User } = await import(
@@ -127,6 +159,20 @@ describe("PUT /api/users/:id", () => {
     expect(response.body.user.email).toBe(
       "actualizado@test.com"
     );
+  });
+});
+
+describe("PUT /api/users/:id - id inválido", () => {
+  test("debe rechazar un id inválido", async () => {
+    const response = await request(app)
+      .put("/api/users/@@@")
+      .send({
+        name: "Nuevo Nombre",
+      });
+
+    expect(response.statusCode).toBe(400);
+
+    expect(response.body.message).toBe("ID inválido");
   });
 });
 
@@ -207,5 +253,12 @@ describe("GET /api/users/search", () => {
       "rocio@test.com"
     );
   });
-});
+
+  test("debe rechazar la búsqueda sin username", async () => {
+    const response = await request(app).get("/api/users/search");
+
+    expect(response.statusCode).toBe(400);
+
+    expect(response.body).toHaveProperty("message");
+  });
 });
