@@ -110,7 +110,7 @@ describe("PUT /api/users/:id", () => {
       email: "actualizado@test.com",
       name: "Usuario Actualizado",
     });
-
+    // Se actualizan email y nombre
     const response = await request(app)
       .put("/api/users/auth0|123")
       .send({
@@ -126,6 +126,35 @@ describe("PUT /api/users/:id", () => {
 
     expect(response.body.user.email).toBe(
       "actualizado@test.com"
+    );
+  });
+});
+
+describe("PATCH /api/users/:id", () => {
+  test("debe actualizar parcialmente un usuario", async () => {
+    const { patchAuth0User } = await import(
+      "../src/services/auth0ManagementService.js"
+    );
+    // Simula la actualización parcial del usuario en Auth0
+    patchAuth0User.mockResolvedValue({
+      user_id: "auth0|123",
+      name: "Nuevo Nombre",
+    });
+    // Solo se actualiza el nombre
+    const response = await request(app)
+      .patch("/api/users/auth0|123")
+      .send({
+        name: "Nuevo Nombre",
+      });
+
+    expect(response.statusCode).toBe(200);
+
+    expect(response.body.message).toBe(
+      "Usuario actualizado parcialmente"
+    );
+
+    expect(response.body.user.name).toBe(
+      "Nuevo Nombre"
     );
   });
 });
