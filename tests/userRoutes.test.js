@@ -179,4 +179,33 @@ describe("DELETE /api/users/:id", () => {
     );
   });
 });
+
+describe("GET /api/users/search", () => {
+  test("debe buscar usuarios por username", async () => {
+    const { findUsersByUsername } = await import(
+      "../src/services/auth0ManagementService.js"
+    );
+    // Simula la búsqueda de usuarios en Auth0
+    findUsersByUsername.mockResolvedValue([
+      {
+        user_id: "auth0|123",
+        email: "rocio@test.com",
+        name: "Rocio",
+      },
+    ]);
+
+    // Se busca por username "rocio"
+    const response = await request(app).get(
+      "/api/users/search?username=rocio"
+    );
+
+    expect(response.statusCode).toBe(200);
+
+    expect(Array.isArray(response.body)).toBe(true);
+
+    expect(response.body[0].email).toBe(
+      "rocio@test.com"
+    );
+  });
+});
 });
